@@ -74,7 +74,7 @@ Vitestで実行し、happy-domによるスライダー連動・設定変更・�
 
 - `src/components/`: 結果表示、生成設定、出典などの表示部品。
 - `src/pages/index.astro`: HTML・head・CSSと辞書の先読みを定義するAstroページ。`App`を`client:load`で読み込みます。
-- `src/hooks/`: 辞書の読み込みと生成、クリップボード、幅調整、初回表示計測。
+- `src/hooks/`: 辞書の読み込みと生成、クリップボード、幅調整。
 - `src/generator.ts`・`src/length-settings.ts`: 抽選、エントロピー、語数の計算。
 - `src/types.ts`・`src/dictionary-settings.ts`: 辞書と全8設定の共通定義。
 - `scripts/`: TypeScriptによる辞書・ZIP作成と公開ファイル検証。

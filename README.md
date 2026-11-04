@@ -72,7 +72,7 @@ BASE_PATH=/japanese-passphrase-generator/ pnpm check:build
 
 初回のみ、リポジトリの **Settings → Pages → Build and deployment → Source** を **GitHub Actions** に設定します。独自のトークンやシークレットは不要です。ActionsをコミットSHAで固定し、デプロイジョブだけにPages公開とOIDCの権限を付けています。
 
-ビルド時の`VITE_COMMIT_SHA`を使い、サイト下部のGitHubリンクは実際に公開されたソースのコミットを指します。辞書は内容のハッシュ付きファイル名で1ファイルにまとめ、HTMLから先読みします。
+ビルド時の`VITE_COMMIT_SHA`を使い、サイト下部の「GitHub」はリポジトリのトップへ、「この版のソース」は実際に公開されたコミットへリンクします。辞書は内容のハッシュ付きファイル名で1ファイルにまとめ、HTMLから先読みします。
 
 ## ライセンス
 

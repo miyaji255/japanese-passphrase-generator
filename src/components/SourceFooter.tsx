@@ -16,11 +16,11 @@ export function SourceFooter(props: { options: DictionaryOptions }) {
         <a href={REPOSITORY} target="_blank" rel="noopener noreferrer">
           GitHub
         </a>
-        <Show when={import.meta.env.VITE_COMMIT_SHA}>
+        <Show when={import.meta.env.PUBLIC_COMMIT_SHA}>
           {' '}
           ·{' '}
           <a
-            href={`${REPOSITORY}/tree/${import.meta.env.VITE_COMMIT_SHA}`}
+            href={`${REPOSITORY}/tree/${import.meta.env.PUBLIC_COMMIT_SHA}`}
             target="_blank"
             rel="noopener noreferrer"
           >

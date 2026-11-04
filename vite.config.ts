@@ -1,19 +1,25 @@
 import { defineConfig } from 'vite-plus';
 import solid from 'vite-plugin-solid';
-import { staticPage } from './scripts/prerender.ts';
 
-const generated = ['dist/**', 'src/generated/**', 'public/dictionaries/**', 'public/wordlists/**'];
+const generated = [
+  'dist/**',
+  '.astro/**',
+  'src/generated/**',
+  'public/dictionaries/**',
+  'public/wordlists/**',
+];
 
 export default defineConfig({
   base: process.env.BASE_PATH || '/',
-  plugins: [solid({ ssr: process.env.NODE_ENV !== 'test' }), staticPage()],
-  server: { host: '0.0.0.0' },
-  build: { target: 'es2022', sourcemap: false, emptyOutDir: true },
+  // Astro owns production builds; this Vite+ config serves checks and DOM tests.
+  envPrefix: ['VITE_', 'PUBLIC_'],
+  plugins: [solid()],
   lint: {
     ignorePatterns: [...generated, 'src/data/*.json'],
     options: { typeAware: true, typeCheck: true },
   },
   fmt: {
+    astro: true,
     singleQuote: true,
     printWidth: 100,
     ignorePatterns: [...generated, 'src/data/*.json'],

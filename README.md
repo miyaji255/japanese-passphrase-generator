@@ -2,7 +2,7 @@
 
 ![CI](https://github.com/miyaji255/japanese-passphrase-generator/actions/workflows/pages.yml/badge.svg)
 
-日本人向けパスフレーズジェネレーター。TypeScript・SolidJS・Vite+による静的なクライアントアプリです。バックエンド、DB、外部API、解析SDK、生成結果の永続化は使いません。
+日本人向けパスフレーズジェネレーター。Astro・TypeScript・SolidJSによる静的なクライアントアプリです。チェックとテストにはVite+を使います。バックエンド、DB、外部API、解析SDK、生成結果の永続化は使いません。
 
 公開先: https://miyaji255.github.io/japanese-passphrase-generator/
 
@@ -51,7 +51,9 @@ pnpm build
 pnpm check:build
 ```
 
-`pnpm check`でOxfmtの整形チェック、Oxlintの型付きlint、TypeScriptの厳密な型チェックを行います。`pnpm format`で整形、`pnpm lint`でlintを単独実行できます。Vite+はプロジェクトの依存関係として固定しているため、グローバルの`vp`は必須ではありません。直接使う場合は`pnpm exec vp`で起動できます。
+`pnpm check`でOxfmtの整形チェック、Oxlintの型付きlint、TypeScriptの厳密な型チェックと`astro check`によるAstroファイルの型チェックを行います。`pnpm format`で整形、`pnpm lint`でlintを単独実行できます。Oxfmtは`@astrojs/compiler-rs`を使い、`.astro`も整形します。Vite+はプロジェクトの依存関係として固定しているため、グローバルの`vp`は必須ではありません。
+
+開発・ビルド・プレビューはそれぞれ`astro dev`・`astro build`・`astro preview`で行います。辞書の準備も含む`pnpm dev`・`pnpm build`を使ってください。グローバルVite+を使う場合は`vp run dev`・`vp run build`でこれらのスクリプトを起動できます。
 
 `dist/`が公開用の静的ファイルです。生成用辞書とダウンロードZIPは毎回ビルド時に作成し、Gitには含めません。
 
@@ -71,12 +73,13 @@ Vitestで実行し、happy-domによるスライダー連動・設定変更・�
 ## 構成
 
 - `src/components/`: 結果表示、生成設定、出典などの表示部品。
+- `src/pages/index.astro`: HTML・head・CSSと辞書の先読みを定義するAstroページ。`App`を`client:load`で読み込みます。
 - `src/hooks/`: 辞書の読み込みと生成、クリップボード、幅調整、初回表示計測。
 - `src/generator.ts`・`src/length-settings.ts`: 抽選、エントロピー、語数の計算。
 - `src/types.ts`・`src/dictionary-settings.ts`: 辞書と全8設定の共通定義。
-- `scripts/`: TypeScriptによる辞書・ZIP作成、静的HTML出力、公開ファイル検証。
+- `scripts/`: TypeScriptによる辞書・ZIP作成と公開ファイル検証。
 
-lint・format・テストの設定は`vite.config.ts`、型チェックの設定は`tsconfig.json`にまとめています。
+サイトの設定は`astro.config.ts`、lint・format・テストの設定は`vite.config.ts`、型チェックの設定は`tsconfig.json`にまとめています。静的HTML生成・Solidのhydration・CSSのインライン化はAstroと公式の`@astrojs/solid-js`に任せています。パスフレーズ生成はブラウザーで行い、ビルド済みHTMLに生成結果を含めません。
 
 ## CI・公開
 
@@ -87,7 +90,7 @@ lint・format・テストの設定は`vite.config.ts`、型チェックの設定
 
 初回のみ、リポジトリの **Settings → Pages → Build and deployment → Source** を **GitHub Actions** に設定します。独自のトークンやシークレットは不要です。ActionsをコミットSHAで固定し、デプロイジョブだけにPages公開とOIDCの権限を付けています。
 
-ビルド時の`VITE_COMMIT_SHA`を使い、サイト下部の「GitHub」はリポジトリのトップへ、「この版のソース」は実際に公開されたコミットへリンクします。辞書は内容のハッシュ付きファイル名で1ファイルにまとめ、HTMLから先読みします。
+ビルド時の`PUBLIC_COMMIT_SHA`を使い、サイト下部の「GitHub」はリポジトリのトップへ、「この版のソース」は実際に公開されたコミットへリンクします。辞書は内容のハッシュ付きファイル名で1ファイルにまとめ、HTMLから先読みします。
 
 ## ライセンス
 

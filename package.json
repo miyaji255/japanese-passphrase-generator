@@ -3,20 +3,31 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@11.25.0",
-  "engines": { "node": ">=22.12.0" },
   "scripts": {
-    "dev": "node scripts/build-dictionaries.mjs && node scripts/build-wordlists.mjs && vite --host 0.0.0.0",
-    "build": "node scripts/build-dictionaries.mjs && node scripts/build-wordlists.mjs && vite build",
-    "test": "node scripts/build-dictionaries.mjs && node scripts/build-wordlists.mjs && node --test tests/*.test.mjs",
-    "check:build": "node scripts/check-build.mjs"
+    "prepare:data": "node scripts/build-dictionaries.ts && node scripts/build-wordlists.ts",
+    "dev": "pnpm prepare:data && vp dev --host 0.0.0.0",
+    "build": "pnpm prepare:data && vp build",
+    "test": "pnpm prepare:data && vp test",
+    "check": "pnpm prepare:data && vp check --deny-warnings",
+    "lint": "vp lint --deny-warnings",
+    "format": "vp fmt",
+    "format:check": "vp fmt --check",
+    "check:build": "node scripts/check-build.ts"
   },
   "dependencies": {
     "solid-js": "^1.9.0"
   },
   "devDependencies": {
+    "@types/node": "^24.0.0",
     "fflate": "^0.8.3",
-    "vite": "^7.0.0",
-    "vite-plugin-solid": "^2.11.0"
-  }
+    "happy-dom": "^20.0.0",
+    "typescript": "^6.0.0",
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.5.0",
+    "vite-plugin-solid": "^2.11.15",
+    "vite-plus": "1.5.0"
+  },
+  "engines": {
+    "node": "^22.18.0 || ^24.11.0 || >=26.0.0"
+  },
+  "packageManager": "pnpm@11.25.0"
 }

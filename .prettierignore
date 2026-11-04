@@ -1,0 +1,2 @@
+# Keep reviewed source dictionaries byte-for-byte; Oxfmt reads this ignore file.
+src/data/*.json

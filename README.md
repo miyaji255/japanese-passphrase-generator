@@ -1,10 +1,10 @@
 # 日本語パスフレーズジェネレーター
 
-![CI](https://github.com/miyaji255/japanese-passphrase-generator/actions/workflows/pages.yml/badge.svg)
+![CI](https://github.com/miyaji255/japanese-passphrase-generator/actions/workflows/ci.yml/badge.svg)
 
 日本人向けパスフレーズジェネレーター。Astro・TypeScript・SolidJSによる静的なクライアントアプリです。チェックとテストにはVite+を使います。バックエンド、DB、外部API、解析SDK、生成結果の永続化は使いません。
 
-公開先: https://miyaji255.github.io/japanese-passphrase-generator/
+公開先: https://passphrase-generator.miyaji255.com/
 
 ## 機能
 
@@ -57,7 +57,7 @@ pnpm check:build
 
 `dist/`が公開用の静的ファイルです。生成用辞書とダウンロードZIPは毎回ビルド時に作成し、Gitには含めません。
 
-GitHub Pagesと同じサブパスで確認する場合は、ビルド・検証の両方に`BASE_PATH`を指定します。
+通常はドメイン直下の`/`で公開します。サブパスで検証する場合は、ビルド・検証の両方に`BASE_PATH`を指定します。
 
 ```sh
 BASE_PATH=/japanese-passphrase-generator/ pnpm build
@@ -83,14 +83,39 @@ Vitestで実行し、happy-domによるスライダー連動・設定変更・�
 
 ## CI・公開
 
-`.github/workflows/pages.yml`で以下を実行します。
+GitHub Actionsは`.github/workflows/ci.yml`でformat・lint・型チェック、19テスト、静的ビルド、公開ファイル、Wranglerのdry-runを検証します。デプロイは行いません。
 
-- PR: ロックファイルに従ったインストール、format・lint・型チェック、テスト、ビルド、公開ファイルとサブパスの検証。
-- mainへのpush・手動実行: 同じ検証に成功した成果物をGitHub Pagesへ公開。
+公開はCloudflare Workers BuildsのGit連携で行います。`wrangler.jsonc`に静的配信ディレクトリ`dist/`と独自ドメインを定義しています。サーバー用のWorkerスクリプトやAstroアダプターは不要です。
 
-初回のみ、リポジトリの **Settings → Pages → Build and deployment → Source** を **GitHub Actions** に設定します。独自のトークンやシークレットは不要です。ActionsをコミットSHAで固定し、デプロイジョブだけにPages公開とOIDCの権限を付けています。
+Cloudflareの **Workers & Pages → Create application → GitHubリポジトリを接続** で以下を設定します。
 
-ビルド時の`PUBLIC_COMMIT_SHA`を使い、サイト下部の「GitHub」はリポジトリのトップへ、「この版のソース」は実際に公開されたコミットへリンクします。辞書は内容のハッシュ付きファイル名で1ファイルにまとめ、HTMLから先読みします。
+| 項目               | 設定値                                    |
+| ------------------ | ----------------------------------------- |
+| リポジトリ         | `miyaji255/japanese-passphrase-generator` |
+| Worker名           | `japanese-passphrase-generator`           |
+| 本番ブランチ       | `main`                                    |
+| ルートディレクトリ | リポジトリ直下                            |
+| ビルドコマンド     | `pnpm build:ci`                           |
+| デプロイコマンド   | `pnpm run deploy`                         |
+
+`packageManager`のpnpm 11.25.0と`.node-version`のNode.js 24を使用します。Cloudflare側でバージョンを指定する場合も、リポジトリの指定と合わせてください。依存関係のインストールではコミット済みロックファイルを使います。
+
+`pnpm build:ci`はチェック・テスト・ビルド・公開ファイル検証を順番に実行します。Cloudflare側でも検証を実施するため、GitHub Actionsの完了を待たずにビルドが始まっても、検証に失敗した版は公開されません。
+
+Wranglerは`passphrase-generator.miyaji255.com`をCustom Domainとして登録します。既存の同名DNSレコードがある場合は、Cloudflareで重複を解消してからデプロイしてください。GitHub PagesのCustom domain設定とCNAMEファイルは使いません。Cloudflareで公開できたことを確認してから、GitHubのSettings → Pagesで旧公開を停止します。
+
+サイトの「この版のソース」には、Workers Buildsが渡す`WORKERS_CI_COMMIT_SHA`を使います。手動ビルド時は`PUBLIC_COMMIT_SHA`で指定でき、こちらを優先します。辞書は内容のハッシュ付きファイル名で1ファイルにまとめ、HTMLから先読みします。
+
+手動で公開する場合は、Cloudflareに認証済みの環境で以下を実行します。
+
+```sh
+pnpm build:ci
+pnpm run deploy
+```
+
+公開せずにWranglerの設定を確認する場合は、`pnpm build`の後に`pnpm check:deploy`を実行します。Wranglerの作業ファイルと認証用の環境変数ファイルはGit管理対象外です。
+
+ブラウザー内でパスフレーズを生成する構成は維持します。Web Analyticsの自動スクリプト挿入やHTMLを書き換える機能はCloudflare側で無効にしてください。アクセス数の参考には、外部JavaScriptを追加せずCloudflareのHTTP統計を使います。リクエスト数には静的アセットやボットも含まれ、閲覧数とは一致しません。
 
 ## ライセンス
 

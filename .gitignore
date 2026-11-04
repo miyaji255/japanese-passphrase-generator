@@ -7,3 +7,6 @@ public/wordlists/
 *.log
 public/dictionaries/
 src/generated/
+.wrangler/
+.dev.vars
+.dev.vars.*

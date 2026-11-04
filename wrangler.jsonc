@@ -1,0 +1,16 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "japanese-passphrase-generator",
+  "compatibility_date": "2026-11-04",
+  "assets": {
+    "directory": "./dist",
+    "html_handling": "force-trailing-slash",
+    "not_found_handling": "none",
+  },
+  "routes": [
+    {
+      "pattern": "passphrase-generator.miyaji255.com",
+      "custom_domain": true,
+    },
+  ],
+}

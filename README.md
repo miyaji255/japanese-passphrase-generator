@@ -2,7 +2,7 @@
 
 ![CI](https://github.com/miyaji255/japanese-passphrase-generator/actions/workflows/pages.yml/badge.svg)
 
-日本人向けパスフレーズジェネレーター。SolidJS + Viteによる静的なクライアントアプリです。バックエンド、DB、外部API、解析SDK、生成結果の永続化は使いません。
+日本人向けパスフレーズジェネレーター。TypeScript・SolidJS・Vite+による静的なクライアントアプリです。バックエンド、DB、外部API、解析SDK、生成結果の永続化は使いません。
 
 公開先: https://miyaji255.github.io/japanese-passphrase-generator/
 
@@ -27,9 +27,9 @@
 2026-11-04に、国立国語研究所の基本語彙・児童語彙群、SudachiDict、JMnedictから選定した3,735語を追加しました。長さを理由に除外せず、601語の長音短縮形は作成担当と別担当の評価を記録しています。不確かな短縮は元のかな準拠表記を維持しています。`src/data/addition-provenance.json`に出典ファイル・行、表記、評価を保持します。このメタデータはビルド時のダウンロード作成に使い、ブラウザー用辞書には含めません。
 
 | 表記方式 | 英語あり・長い語なし | 英語あり・長い語あり |
-| --- | ---: | ---: |
-| かな方式 | 16,542 | 19,171 |
-| 短い方式 | 15,815 | 18,316 |
+| -------- | -------------------: | -------------------: |
+| かな方式 |               16,542 |               19,171 |
+| 短い方式 |               15,815 |               18,316 |
 
 日本語のみの候補数は、かな方式で長い語なし13,945・あり16,574、短い方式で長い語なし13,230・あり15,731です。出力される英字表記で重複を除いており、追加したレコード数とは一致しません。初期設定は18,316候補で、5語は約70.8bit、6語は約85.0bitです。
 
@@ -37,7 +37,7 @@
 
 ## 開発
 
-Node.js 22.12以降、pnpm 11.25.0を使用します。
+Node.js 24（`.node-version`）、pnpm 11.25.0を使用します。Node.jsの対応範囲は`package.json`の`engines`に記載しています。
 
 ```sh
 pnpm install --frozen-lockfile
@@ -45,10 +45,13 @@ pnpm dev
 ```
 
 ```sh
+pnpm check
 pnpm test
 pnpm build
 pnpm check:build
 ```
+
+`pnpm check`でOxfmtの整形チェック、Oxlintの型付きlint、TypeScriptの厳密な型チェックを行います。`pnpm format`で整形、`pnpm lint`でlintを単独実行できます。Vite+はプロジェクトの依存関係として固定しているため、グローバルの`vp`は必須ではありません。直接使う場合は`pnpm exec vp`で起動できます。
 
 `dist/`が公開用の静的ファイルです。生成用辞書とダウンロードZIPは毎回ビルド時に作成し、Gitには含めません。
 
@@ -63,11 +66,23 @@ BASE_PATH=/japanese-passphrase-generator/ pnpm check:build
 
 追加語は全件の出典・短縮形と、全8設定のダウンロードCSVが抽選候補に一致すること、出典に応じたライセンス・NOTICEが同梱されることも検証しています。
 
+Vitestで実行し、happy-domによるスライダー連動・設定変更・コピー・コピー失敗の画面テストも含めています。辞書の英字表記・補助表示・設定フラグが変わっていないことは、コンパクト辞書全体のハッシュでも検証します。語彙を変更する際は、候補数・ハッシュの期待値を変更内容と照合してください。元の大容量辞書JSONは整形対象から除外しています。
+
+## 構成
+
+- `src/components/`: 結果表示、生成設定、出典などの表示部品。
+- `src/hooks/`: 辞書の読み込みと生成、クリップボード、幅調整、初回表示計測。
+- `src/generator.ts`・`src/length-settings.ts`: 抽選、エントロピー、語数の計算。
+- `src/types.ts`・`src/dictionary-settings.ts`: 辞書と全8設定の共通定義。
+- `scripts/`: TypeScriptによる辞書・ZIP作成、静的HTML出力、公開ファイル検証。
+
+lint・format・テストの設定は`vite.config.ts`、型チェックの設定は`tsconfig.json`にまとめています。
+
 ## CI・公開
 
 `.github/workflows/pages.yml`で以下を実行します。
 
-- PR: ロックファイルに従ったインストール、テスト、ビルド、公開ファイルとサブパスの検証。
+- PR: ロックファイルに従ったインストール、format・lint・型チェック、テスト、ビルド、公開ファイルとサブパスの検証。
 - mainへのpush・手動実行: 同じ検証に成功した成果物をGitHub Pagesへ公開。
 
 初回のみ、リポジトリの **Settings → Pages → Build and deployment → Source** を **GitHub Actions** に設定します。独自のトークンやシークレットは不要です。ActionsをコミットSHAで固定し、デプロイジョブだけにPages公開とOIDCの権限を付けています。
@@ -78,12 +93,12 @@ BASE_PATH=/japanese-passphrase-generator/ pnpm check:build
 
 アプリのコードは[MIT](LICENSE)です。辞書データには出典ごとの条件が適用され、MITへの変更は行っていません。
 
-| 対象 | ライセンス・表示 |
-| --- | --- |
-| diceware-ja / JUMAN由来の既存日本語 | BSD、[著作権表示](public/licenses/JUMAN-BSD.txt) |
-| 国立国語研究所の追加語彙 | CC BY 4.0 |
-| JMnedict由来の追加語彙、NGSL由来の英語と改変部分 | CC BY-SA 4.0 |
-| SudachiDict由来の追加語彙 | Apache 2.0と、UniDic・NEologdの上流著作権表示 |
-| 上流資料と独立した追加英語・読み・意味 | CC0 |
+| 対象                                             | ライセンス・表示                                 |
+| ------------------------------------------------ | ------------------------------------------------ |
+| diceware-ja / JUMAN由来の既存日本語              | BSD、[著作権表示](public/licenses/JUMAN-BSD.txt) |
+| 国立国語研究所の追加語彙                         | CC BY 4.0                                        |
+| JMnedict由来の追加語彙、NGSL由来の英語と改変部分 | CC BY-SA 4.0                                     |
+| SudachiDict由来の追加語彙                        | Apache 2.0と、UniDic・NEologdの上流著作権表示    |
+| 上流資料と独立した追加英語・読み・意味           | CC0                                              |
 
 詳細は[日本語追加語の出典](public/licenses/ADDITIONS-NOTICE.txt)、[SudachiDictのNOTICE](public/licenses/SUDACHI-NOTICE.txt)、[CC0の対象](public/licenses/CC0-NOTICE.txt)、[ライセンス一覧](public/licenses/)を参照してください。ダウンロードZIPにも出典・利用条件を同梱します。

@@ -3,7 +3,7 @@ import App from './App.jsx';
 
 export function renderPage() {
   return {
-    page: renderToString(() => <App/>),
+    page: renderToString(() => <App />),
     hydrationScript: generateHydrationScript(),
   };
 }

@@ -17,9 +17,15 @@ export function parseDictionary(text, expectedCount, settings = {}) {
     const mask = Number(line.slice(separator + 1));
     const word = line.slice(0, separator);
     const hintSeparator = word.indexOf('\t');
-    if (separator < 0 || hintSeparator < 1 || hintSeparator === word.length - 1 ||
-        word.indexOf('\t', hintSeparator + 1) !== -1 ||
-        !Number.isInteger(mask) || mask < 1 || mask > 255) {
+    if (
+      separator < 0 ||
+      hintSeparator < 1 ||
+      hintSeparator === word.length - 1 ||
+      word.indexOf('\t', hintSeparator + 1) !== -1 ||
+      !Number.isInteger(mask) ||
+      mask < 1 ||
+      mask > 255
+    ) {
       throw new Error('Invalid dictionary entry');
     }
     words[index] = word;
@@ -34,14 +40,16 @@ export function parseDictionary(text, expectedCount, settings = {}) {
 
 export function selectDictionaryPool(dictionary, mask) {
   let cached = pools.get(dictionary);
-  if (!cached) pools.set(dictionary, cached = new Map());
+  if (!cached) pools.set(dictionary, (cached = new Map()));
   if (!cached.has(mask)) {
     const started = performance.now();
     const selected = dictionary.words.filter((_, index) => dictionary.masks[index] & mask);
     const timing = timings.get(dictionary);
-    if (timing) timings.set(selected, {
-      ...timing, validationMs: timing.validationMs + performance.now() - started,
-    });
+    if (timing)
+      timings.set(selected, {
+        ...timing,
+        validationMs: timing.validationMs + performance.now() - started,
+      });
     cached.set(mask, selected);
   }
   return cached.get(mask);
@@ -52,21 +60,29 @@ export function createDictionaryLoader(fetcher = (...args) => fetch(...args)) {
   return function load(url, expectedCount, settings) {
     if (!cache.has(url)) {
       let requested;
-      const request = Promise.resolve().then(() => {
-        requested = performance.now();
-        return fetcher(url);
-      }).then(response => {
-        if (!response.ok) throw new Error('Dictionary request failed');
-        return response.text();
-      }).then(text => {
-        const received = performance.now();
-        const dictionary = parseDictionary(text, expectedCount, settings);
-        timings.set(dictionary, { requested, received, validationMs: performance.now() - received });
-        return dictionary;
-      }).catch(error => {
-        cache.delete(url);
-        throw error;
-      });
+      const request = Promise.resolve()
+        .then(() => {
+          requested = performance.now();
+          return fetcher(url);
+        })
+        .then((response) => {
+          if (!response.ok) throw new Error('Dictionary request failed');
+          return response.text();
+        })
+        .then((text) => {
+          const received = performance.now();
+          const dictionary = parseDictionary(text, expectedCount, settings);
+          timings.set(dictionary, {
+            requested,
+            received,
+            validationMs: performance.now() - received,
+          });
+          return dictionary;
+        })
+        .catch((error) => {
+          cache.delete(url);
+          throw error;
+        });
       cache.set(url, request);
     }
     return cache.get(url);

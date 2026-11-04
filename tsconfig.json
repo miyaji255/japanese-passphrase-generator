@@ -1,4 +1,5 @@
 {
+  "extends": "astro/tsconfigs/strict",
   "compilerOptions": {
     "target": "ES2022",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
@@ -17,14 +18,18 @@
     "noUnusedParameters": true,
     "noUncheckedIndexedAccess": true,
     "skipLibCheck": true,
-    "types": ["vite-plus/client", "node"]
+    "types": ["astro/client", "vite-plus/client", "node"]
   },
   "include": [
+    ".astro/types.d.ts",
+    "src/**/*.astro",
     "src/**/*.ts",
     "src/**/*.tsx",
     "scripts/**/*.ts",
     "tests/**/*.ts",
     "tests/**/*.tsx",
-    "vite.config.ts"
-  ]
+    "vite.config.ts",
+    "astro.config.ts"
+  ],
+  "exclude": ["dist", "node_modules"]
 }

@@ -13,3 +13,10 @@ test('dictionary and download URLs stay under the deployment path', () => {
     }
   }
 });
+
+test('base paths without a trailing slash work for Astro assets', () => {
+  assert.equal(
+    assetUrl('/dictionaries/words-hash.txt', '/japanese-passphrase-generator'),
+    '/japanese-passphrase-generator/dictionaries/words-hash.txt',
+  );
+});

@@ -14,9 +14,17 @@ assert(
   html.includes(`href="${dictionaryUrl}"`),
   'Dictionary preload must use the deployment base path',
 );
-assert(html.includes('日本語パスフレーズジェネレーター'), 'Static UI must be prerendered');
-assert(html.includes('<style>'), 'CSS must be inlined');
-for (const match of html.matchAll(/(?:href|src)="(\/[^"#?]*)(?:[?#][^"]*)?"/g)) {
+assert(html.includes('<h1'), 'Static UI must be prerendered');
+assert(/<astro-island\b[^>]*client="load"/.test(html), 'Solid must hydrate on page load');
+assert(html.includes('読み込み中…'), 'The static page must contain the loading state');
+assert(
+  !/<span\b[^>]*class="word-token"/.test(html),
+  'Generated passphrases must never be baked into static HTML',
+);
+assert(/<style(?:\s[^>]*)?>/.test(html), 'CSS must be inlined');
+for (const match of html.matchAll(
+  /(?:href|src|component-url|renderer-url)="(\/[^"#?]*)(?:[?#][^"]*)?"/g,
+)) {
   const url = match[1];
   assert(url);
   assert(url.startsWith(base), `Root-relative link bypasses the deployment base: ${url}`);
@@ -30,9 +38,9 @@ assert.equal(
 for (const options of DICTIONARY_OPTIONS) {
   assert(existsSync(resolve(output, `wordlists/words-${dictionaryKey(options)}.zip`)));
 }
-if (process.env.VITE_COMMIT_SHA) {
+if (process.env.PUBLIC_COMMIT_SHA) {
   assert(
-    html.includes(`/tree/${process.env.VITE_COMMIT_SHA}`),
+    html.includes(`/tree/${process.env.PUBLIC_COMMIT_SHA}`),
     'Source link must identify the deployed commit',
   );
 }

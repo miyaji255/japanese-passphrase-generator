@@ -1,3 +1,10 @@
+---
+import App from '../App.tsx';
+import { assetUrl } from '../asset-url.ts';
+import { dictionaryManifest } from '../dictionary-manifest.ts';
+import '../style.css';
+---
+
 <!doctype html>
 <html lang="ja">
   <head>
@@ -9,11 +16,16 @@
       content="日本語の単語をローマ字でつなぎ、ランダムなパスフレーズを生成します。語数や最低bit数を指定できます。"
     />
     <meta name="referrer" content="no-referrer" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=3" />
+    <link rel="icon" type="image/svg+xml" href={assetUrl('/favicon.svg?v=3')} />
     <title>日本語パスフレーズジェネレーター</title>
+    <link
+      rel="preload"
+      href={assetUrl(dictionaryManifest.url)}
+      as="fetch"
+      crossorigin="anonymous"
+    />
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <App client:load />
   </body>
 </html>

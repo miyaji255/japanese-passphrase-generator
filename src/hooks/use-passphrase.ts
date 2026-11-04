@@ -3,19 +3,10 @@ import type { Accessor } from 'solid-js';
 import { dictionaryManifest as manifest } from '../dictionary-manifest.ts';
 import { assetUrl } from '../asset-url.ts';
 import { dictionaryKey } from '../dictionary-settings.ts';
-import {
-  loadDictionary,
-  selectDictionaryPool,
-  getDictionaryTimings,
-} from '../dictionary-loader.ts';
-import type { DictionaryPool, DictionaryTiming, ParsedDictionary } from '../dictionary-loader.ts';
+import { loadDictionary, selectDictionaryPool } from '../dictionary-loader.ts';
+import type { DictionaryPool, ParsedDictionary } from '../dictionary-loader.ts';
 import { decodeWord, generateWords, joinWords } from '../generator.ts';
 import type { DictionaryOptions, DisplayWord } from '../types.ts';
-
-export interface GenerationMeasurement {
-  timing: DictionaryTiming | undefined;
-  selectionMs: number;
-}
 
 export function usePassphrase(options: Accessor<DictionaryOptions>, count: Accessor<number>) {
   const [words, setWords] = createSignal<DisplayWord[]>([]);
@@ -24,8 +15,6 @@ export function usePassphrase(options: Accessor<DictionaryOptions>, count: Acces
   const [generationError, setGenerationError] = createSignal('');
   const [attempt, setAttempt] = createSignal(0);
   const [revision, setRevision] = createSignal(0);
-  const [measurement, setMeasurement] = createSignal<GenerationMeasurement>();
-  let measured = false;
   const info = createMemo(() => manifest.settings[dictionaryKey(options())]);
   const pool = createMemo(() => {
     const dictionary = loaded();
@@ -51,15 +40,9 @@ export function usePassphrase(options: Accessor<DictionaryOptions>, count: Acces
   function generate(available: DictionaryPool, length: number) {
     setRevision((value) => value + 1);
     try {
-      const started = performance.now();
       const selected = generateWords(available, length).map(decodeWord);
-      const selectionMs = performance.now() - started;
       setWords(selected);
       setGenerationError('');
-      if (!measured) {
-        measured = true;
-        setMeasurement({ timing: getDictionaryTimings(available), selectionMs });
-      }
     } catch {
       setWords([]);
       setGenerationError(
@@ -85,9 +68,7 @@ export function usePassphrase(options: Accessor<DictionaryOptions>, count: Acces
     words,
     info,
     revision,
-    measurement,
     regenerate,
-    dictionaryUrl: assetUrl(manifest.url),
     phrase: createMemo(() => joinWords(words())),
     loading: () => !pool() && !loadError(),
     error: () => loadError() || generationError(),

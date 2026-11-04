@@ -1,8 +1,6 @@
 import { For, Show } from 'solid-js';
 import type { DisplayWord } from '../types.ts';
-import type { GenerationMeasurement } from '../hooks/use-passphrase.ts';
 import { usePhraseFit } from '../hooks/use-phrase-fit.ts';
-import { useReadyMeasurement } from '../hooks/use-ready-measurement.ts';
 import { Icon } from './Icon.tsx';
 import { EntropyGuide } from './EntropyGuide.tsx';
 
@@ -15,9 +13,6 @@ interface ResultProps {
   error: string;
   copied: boolean;
   copyError: string;
-  revision: number;
-  measurement: GenerationMeasurement | undefined;
-  dictionaryUrl: string;
   onRegenerate: () => void;
   onCopy: () => Promise<void>;
 }
@@ -30,11 +25,6 @@ export function PassphraseResult(props: ResultProps) {
     () => list,
     () => props.count,
     () => props.words,
-  );
-  useReadyMeasurement(
-    () => stage,
-    () => props.measurement,
-    props.dictionaryUrl,
   );
 
   return (
@@ -51,7 +41,6 @@ export function PassphraseResult(props: ResultProps) {
         }}
         class="word-stage"
         classList={{ 'many-words': props.count > 10 }}
-        data-revision={props.revision}
         aria-busy={props.loading}
       >
         <Show

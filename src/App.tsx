@@ -35,9 +35,6 @@ export default function App() {
             error={generator.error()}
             copied={clipboard.copied()}
             copyError={clipboard.error()}
-            revision={generator.revision()}
-            measurement={generator.measurement()}
-            dictionaryUrl={generator.dictionaryUrl}
             onRegenerate={generator.regenerate}
             onCopy={clipboard.copy}
           />

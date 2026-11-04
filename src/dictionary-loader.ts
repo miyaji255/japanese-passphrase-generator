@@ -5,12 +5,6 @@ export interface ParsedDictionary {
   masks: Uint8Array;
 }
 
-export interface DictionaryTiming {
-  requested: number;
-  received: number;
-  validationMs: number;
-}
-
 interface DictionaryResponse {
   ok: boolean;
   text?: () => Promise<string>;
@@ -19,12 +13,7 @@ interface DictionaryResponse {
 export type DictionaryFetcher = (url: string) => DictionaryResponse | Promise<DictionaryResponse>;
 export type DictionaryPool = readonly string[];
 
-const timings = new WeakMap<ParsedDictionary | DictionaryPool, DictionaryTiming>();
 const pools = new WeakMap<ParsedDictionary, Map<number, DictionaryPool>>();
-
-export function getDictionaryTimings(words: DictionaryPool): DictionaryTiming | undefined {
-  return timings.get(words);
-}
 
 function isSettingMask(mask: number): boolean {
   return Number.isInteger(mask) && mask >= 1 && mask <= 128 && (mask & (mask - 1)) === 0;
@@ -84,14 +73,7 @@ export function selectDictionaryPool(dictionary: ParsedDictionary, mask: number)
   }
   const existing = cached.get(mask);
   if (existing) return existing;
-  const started = performance.now();
   const selected = dictionary.words.filter((_, index) => dictionary.masks[index]! & mask);
-  const timing = timings.get(dictionary);
-  if (timing)
-    timings.set(selected, {
-      ...timing,
-      validationMs: timing.validationMs + performance.now() - started,
-    });
   cached.set(mask, selected);
   return selected;
 }
@@ -105,26 +87,13 @@ export function createDictionaryLoader(fetcher: DictionaryFetcher = (url) => fet
   ) {
     const existing = cache.get(url);
     if (existing) return existing;
-    let requested = 0;
     const request = Promise.resolve()
-      .then(() => {
-        requested = performance.now();
-        return fetcher(url);
-      })
+      .then(() => fetcher(url))
       .then((response) => {
         if (!response.ok || !response.text) throw new Error('Dictionary request failed');
         return response.text();
       })
-      .then((text) => {
-        const received = performance.now();
-        const dictionary = parseDictionary(text, expectedCount, settings);
-        timings.set(dictionary, {
-          requested,
-          received,
-          validationMs: performance.now() - received,
-        });
-        return dictionary;
-      })
+      .then((text) => parseDictionary(text, expectedCount, settings))
       .catch((error: unknown) => {
         cache.delete(url);
         throw error;

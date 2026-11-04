@@ -46,7 +46,9 @@ export function PassphraseResult(props: ResultProps) {
         </div>
       </div>
       <div
-        ref={stage}
+        ref={(element) => {
+          stage = element;
+        }}
         class="word-stage"
         classList={{ 'many-words': props.count > 10 }}
         data-revision={props.revision}
@@ -69,7 +71,9 @@ export function PassphraseResult(props: ResultProps) {
             }
           >
             <div
-              ref={list}
+              ref={(element) => {
+                list = element;
+              }}
               class="word-list"
               classList={{ 'single-line': props.count <= 6 }}
               style={{ '--phrase-scale': scale() }}

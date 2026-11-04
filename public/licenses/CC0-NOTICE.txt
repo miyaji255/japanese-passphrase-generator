@@ -1,0 +1,14 @@
+﻿日本語パスフレーズジェネレーター 独自追加データのCC0宣言
+
+対象
+words.csvの「出典」が「独自追加語」の行に含まれる、上流の資料と独立して作成した追加語・読み・意味。
+
+本プロジェクトの権利者は、対象データについて保有する著作権および関連する権利を、法令で認められる最大限の範囲で放棄し、CC0 1.0 Universalを適用します。
+
+CC0 1.0 Universal
+https://creativecommons.org/publicdomain/zero/1.0/
+
+正式な法的文書
+https://creativecommons.org/publicdomain/zero/1.0/legalcode.en
+
+既存日本語データのBSDライセンス、NGSL由来データとその改変部分のCC BY-SA 4.0、および追加日本語データの出典ごとの条件（ADDITIONS-NOTICE.txt）は、それぞれの対象データに引き続き適用されます。追加日本語データは本CC0宣言の対象ではありません。

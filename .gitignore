@@ -1,0 +1,8 @@
+node_modules/
+dist/
+public/wordlists/
+.env
+.env.*
+*.log
+public/dictionaries/
+src/generated/

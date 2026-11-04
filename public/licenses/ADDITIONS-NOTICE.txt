@@ -1,0 +1,50 @@
+﻿日本語パスフレーズジェネレーター 日本語追加語の出典・利用条件
+
+追加日: 2026-11-04
+採用した追加語: 3,735件
+行ごとの出典はダウンロードCSVの「出典」「ライセンス」「出典URL」「出典箇所」を参照してください。
+同音語・同じローマ字の候補は、生成設定を適用した後にまとめています。
+
+1. 国立国語研究所 教育基本語彙データベース・日本語教育基本語彙データベース
+https://mmsrv.ninjal.ac.jp/brfvep/
+資料: kyoikukihongoi_2009A.csv / kyoikukihongoi_2009B.csv / rokusyutaisyo.csv
+利用条件: Creative Commons Attribution 4.0 International (CC BY 4.0)
+https://creativecommons.org/licenses/by/4.0/
+全文: CC-BY-4.0.txt
+
+2. 国立国語研究所 幼児語彙・絵本語彙・作文語彙・教科書語彙・漢字語彙
+国立国語研究所報告117付属資料
+https://mmsrv.ninjal.ac.jp/bev/
+利用条件: Creative Commons Attribution 4.0 International (CC BY 4.0)
+https://creativecommons.org/licenses/by/4.0/
+全文: CC-BY-4.0.txt
+
+3. JMnedict (Japanese Multilingual Named Entity Dictionary)
+Electronic Dictionary Research and Development Group (EDRDG)
+https://www.edrdg.org/pub/Nihongo/enamdict_doc.html
+原本: https://www.edrdg.org/pub/Nihongo/JMnedict.xml.gz
+利用条件: Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
+https://www.edrdg.org/edrdg/licence.html
+https://creativecommons.org/licenses/by-sa/4.0/
+全文: CC-BY-SA-4.0.txt
+出典箇所の番号はXMLのentry要素の1始まりの通し番号です。
+JMnedict由来のデータおよびその改変部分にはCC BY-SA 4.0を適用します。
+
+4. SudachiDict V1 source release 20261015
+Copyright (c) 2017-2023 Works Applications Co., Ltd.
+https://github.com/WorksApplications/SudachiDict
+原本: http://sudachi.s3-website-ap-northeast-1.amazonaws.com/sudachidict-raw/v1/
+利用条件: Apache License, Version 2.0
+https://www.apache.org/licenses/LICENSE-2.0
+全文: Apache-2.0.txt
+UniDicおよびNEologdの一部を含みます。同じ20261015版の公式配布に同梱された
+LEGALの著作権表示・BSD条件・上流データの謝辞をSUDACHI-NOTICE.txtに収録しています。
+これらの条件・著作権表示も保持します。
+
+変更内容
+単語の選別、読みのひらがな正規化、ローマ字化、長音短縮形の作成、
+漢字・かなによる補助表示、分類、設定に応じた選別、同じ英字表記の重複整理。
+元の資料の著者による承認・推薦を示すものではありません。
+
+追加日本語の出典条件はCC0に置き換えていません。
+アプリ内の独立した追加英語を対象とするCC0-NOTICE.txtは、この日本語追加語には適用しません。

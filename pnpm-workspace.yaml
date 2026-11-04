@@ -1,5 +1,6 @@
 allowBuilds:
   esbuild: true
+  workerd: true
 minimumReleaseAgeExclude:
   - '@oxlint/binding-darwin-x64@1.91.0'
   - '@oxlint/binding-freebsd-x64@1.91.0'

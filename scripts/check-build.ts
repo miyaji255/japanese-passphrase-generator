@@ -38,10 +38,8 @@ assert.equal(
 for (const options of DICTIONARY_OPTIONS) {
   assert(existsSync(resolve(output, `wordlists/words-${dictionaryKey(options)}.zip`)));
 }
-if (process.env.PUBLIC_COMMIT_SHA) {
-  assert(
-    html.includes(`/tree/${process.env.PUBLIC_COMMIT_SHA}`),
-    'Source link must identify the deployed commit',
-  );
+const commitSha = process.env.PUBLIC_COMMIT_SHA || process.env.WORKERS_CI_COMMIT_SHA;
+if (commitSha) {
+  assert(html.includes(`/tree/${commitSha}`), 'Source link must identify the deployed commit');
 }
 console.log(`Verified prerendering, links, dictionary and all downloads under ${base}`);
